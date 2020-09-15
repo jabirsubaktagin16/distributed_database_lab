@@ -156,6 +156,29 @@ create or replace package body bpl as
 		for R in (select Name, teamname, role from players@site_link, teams@site_link, country@site_link where nationality=cid and team=teamid and cname=country_name) loop
 			DBMS_OUTPUT.PUT_LINE(R.Name||'		'||R.teamname||'		'||R.role);
 		end loop;
+		exception
+			when no_data_found then
+				DBMS_OUTPUT.PUT_LINE('This Team name does not exist here.');
 	end countryPlayer;
+	
+	procedure centurions(id players.plid@site_link %type)
+		IS
+	begin
+		DBMS_OUTPUT.PUT_LINE('Name			Highest Score		Hundreds');
+		DBMS_OUTPUT.PUT_LINE('_____________________________________________________________________');
+		for R in (select Name, highest_score, hundreds from players@site_link join batting@site_link on plid=player_id and hundreds>=1 order by hundreds desc) loop
+			DBMS_OUTPUT.PUT_LINE(R.Name||'		'||R.highest_score||'				'||R.hundreds);
+		end loop;
+	end centurions;
+	
+	procedure fifers(id players.plid@site_link %type)
+		IS
+	begin
+		DBMS_OUTPUT.PUT_LINE('Name			Best Bowling Figure		5WM');
+		DBMS_OUTPUT.PUT_LINE('_____________________________________________________________________');
+		for R in (select Name, best_figure, fiveWM from players@site_link join bowling@site_link on plid=player_id and fiveWM>=1 order by fiveWM desc) loop
+			DBMS_OUTPUT.PUT_LINE(R.Name||'		'||R.best_figure||'				'||R.fiveWM);
+		end loop;
+	end fifers;
 end bpl;
 /

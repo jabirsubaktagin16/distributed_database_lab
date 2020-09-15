@@ -20,6 +20,10 @@ begin
 		bpl.countryPlayer(team_name);
 	elsif choice=6 then
 		bpl.successfulTeam(id);
+	elsif choice=7 then
+		bpl.centurions(id);
+	elsif choice=8 then
+		bpl.fifers(id);
 	end if;
 end;
 /
@@ -30,3 +34,5 @@ end;
 ---4. A Team's Player
 ---5. A Country's Player
 ---6. Most Successful Team
+---7. Centurions
+---8. Fifers
