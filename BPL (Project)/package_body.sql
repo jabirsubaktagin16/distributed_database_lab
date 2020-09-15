@@ -8,7 +8,7 @@ create or replace package body bpl as
 	begin
 		DBMS_OUTPUT.PUT_LINE('Name			Matches		Runs		Highest Score');
 		DBMS_OUTPUT.PUT_LINE('_____________________________________________________________________');
-		for R in (select Name, Matches, Runs, highest_score from players@site_link join batting@site_link on plid=player_id order by runs desc) loop
+		for R in (select * from tenBatsman) loop
 			if cnt=10 then
 				exit;
 			else
@@ -26,7 +26,7 @@ create or replace package body bpl as
 	begin
 		DBMS_OUTPUT.PUT_LINE('Name			Matches		Wickets		Best Bowling Figure');
 		DBMS_OUTPUT.PUT_LINE('_____________________________________________________________________');
-		for R in (select Name, Matches, Wickets, best_figure from players@site_link join bowling@site_link on plid=player_id order by Wickets desc) loop
+		for R in (select * from tenBowler) loop
 			if cnt=10 then
 				exit;
 			else
@@ -143,7 +143,7 @@ create or replace package body bpl as
 	begin
 		DBMS_OUTPUT.PUT_LINE('Name			Nationality		Role');
 		DBMS_OUTPUT.PUT_LINE('_____________________________________________________________________');
-		for R in (select Name, cname, role from players@site_link, teams@site_link, country@site_link where nationality=cid and team=teamid and teamname=team_name) loop
+		for R in (select * from playerTeamCountry where teamname=team_name) loop
 			DBMS_OUTPUT.PUT_LINE(R.Name||'		'||R.cname||'		'||R.role);
 		end loop;
 	end teamPlayer;
@@ -153,7 +153,7 @@ create or replace package body bpl as
 	begin
 		DBMS_OUTPUT.PUT_LINE('Name			Team			Role');
 		DBMS_OUTPUT.PUT_LINE('_____________________________________________________________________');
-		for R in (select Name, teamname, role from players@site_link, teams@site_link, country@site_link where nationality=cid and team=teamid and cname=country_name) loop
+		for R in (select * from playerTeamCountry where cname=country_name) loop
 			DBMS_OUTPUT.PUT_LINE(R.Name||'		'||R.teamname||'		'||R.role);
 		end loop;
 		exception
@@ -166,7 +166,7 @@ create or replace package body bpl as
 	begin
 		DBMS_OUTPUT.PUT_LINE('Name			Highest Score		Hundreds');
 		DBMS_OUTPUT.PUT_LINE('_____________________________________________________________________');
-		for R in (select Name, highest_score, hundreds from players@site_link join batting@site_link on plid=player_id and hundreds>=1 order by hundreds desc) loop
+		for R in (select * from centurionBatsman) loop
 			DBMS_OUTPUT.PUT_LINE(R.Name||'		'||R.highest_score||'				'||R.hundreds);
 		end loop;
 	end centurions;
@@ -176,7 +176,7 @@ create or replace package body bpl as
 	begin
 		DBMS_OUTPUT.PUT_LINE('Name			Best Bowling Figure		5WM');
 		DBMS_OUTPUT.PUT_LINE('_____________________________________________________________________');
-		for R in (select Name, best_figure, fiveWM from players@site_link join bowling@site_link on plid=player_id and fiveWM>=1 order by fiveWM desc) loop
+		for R in (select * from fiferBowler) loop
 			DBMS_OUTPUT.PUT_LINE(R.Name||'		'||R.best_figure||'				'||R.fiveWM);
 		end loop;
 	end fifers;
