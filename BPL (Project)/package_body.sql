@@ -8,7 +8,7 @@ create or replace package body bpl as
 	begin
 		DBMS_OUTPUT.PUT_LINE('Name			Matches		Runs		Highest Score');
 		DBMS_OUTPUT.PUT_LINE('_____________________________________________________________________');
-		for R in (select * from tenBatsman) loop
+		for R in (select Name, Matches, Runs, highest_score from batsman order by runs desc) loop
 			if cnt=10 then
 				exit;
 			else
@@ -26,7 +26,7 @@ create or replace package body bpl as
 	begin
 		DBMS_OUTPUT.PUT_LINE('Name			Matches		Wickets		Best Bowling Figure');
 		DBMS_OUTPUT.PUT_LINE('_____________________________________________________________________');
-		for R in (select * from tenBowler) loop
+		for R in (select Name, Matches, Wickets, best_figure from bowler order by wickets desc) loop
 			if cnt=10 then
 				exit;
 			else
@@ -43,7 +43,7 @@ create or replace package body bpl as
 	runnerup_time teams.runnerup@site_link %type;
 	
 	begin
-		select teamname, champion, runnerup into team_name, champion_time, runnerup_time from teams@site_link where champion=(select max(champion) from teams@site_link);
+		select teamname, champion, runnerup into team_name, champion_time, runnerup_time from teams where champion=(select max(champion) from teams);
 		DBMS_OUTPUT.PUT_LINE(team_name);
 		DBMS_OUTPUT.PUT_LINE('Champion: '||champion_time);
 		DBMS_OUTPUT.PUT_LINE('Runners Up: '||runnerup_time);
@@ -83,7 +83,8 @@ create or replace package body bpl as
 		begin
 			select age, cname, teamname, jerseyNo, role 
 			into player_age, player_nationality, player_team, kit_no, player_role 
-			from players@site_link, country@site_link, teams@site_link where nationality=cid and team=teamid and name=player_name;
+			from playerTeamCountry 
+			where name=player_name;
 			DBMS_OUTPUT.PUT_LINE('-----Personal Information-----');
 			DBMS_OUTPUT.PUT_LINE('Name: '||player_name);
 			DBMS_OUTPUT.PUT_LINE('Age: '||player_age);
@@ -100,7 +101,7 @@ create or replace package body bpl as
 		begin
 			select batting_hand, batting_position, matches, inns, not_out, runs, highest_score, hundreds, fiftys, fours, sixes
 			into batting_hand, batting_position, batting_match, batting_innings, batting_not_out, batting_runs, highest_score, hundreds, fiftys, fours, sixes
-			from batting@site_link where player_id=(select plid from players@site_link where name=player_name);
+			from Batsman where player_id=(select plid from PlayerFull where name=player_name);
 			DBMS_OUTPUT.PUT_LINE('-----Batting Statistics-----');
 			DBMS_OUTPUT.PUT_LINE('Batting Hand: '||batting_hand);
 			DBMS_OUTPUT.PUT_LINE('Batting Position: '||batting_position);
@@ -121,7 +122,7 @@ create or replace package body bpl as
 		begin
 			select bowling_hand, bowling_type, matches, inns, runs, wickets, best_figure, fourWM, fiveWM
 			into bowling_hand, bowling_type, bowling_match, bowling_innings, bowling_runs, wickets, best_figure, fourWM, fiveWM
-			from bowling@site_link where player_id=(select plid from players@site_link where name=player_name);
+			from bowler where player_id=(select plid from playerFull where name=player_name);
 			DBMS_OUTPUT.PUT_LINE('-----Bowling Statistics-----');
 			DBMS_OUTPUT.PUT_LINE('Bowling Type: '||bowling_hand||' '||bowling_type);
 			DBMS_OUTPUT.PUT_LINE('Matches: '||bowling_match);
@@ -166,7 +167,7 @@ create or replace package body bpl as
 	begin
 		DBMS_OUTPUT.PUT_LINE('Name			Highest Score		Hundreds');
 		DBMS_OUTPUT.PUT_LINE('_____________________________________________________________________');
-		for R in (select * from centurionBatsman) loop
+		for R in (select Name, highest_score, hundreds from batsman where hundreds>=1 order by hundreds desc) loop
 			DBMS_OUTPUT.PUT_LINE(R.Name||'		'||R.highest_score||'				'||R.hundreds);
 		end loop;
 	end centurions;
@@ -176,7 +177,7 @@ create or replace package body bpl as
 	begin
 		DBMS_OUTPUT.PUT_LINE('Name			Best Bowling Figure		5WM');
 		DBMS_OUTPUT.PUT_LINE('_____________________________________________________________________');
-		for R in (select * from fiferBowler) loop
+		for R in (select Name, best_figure, fiveWM from bowler where fiveWM>=1 order by fiveWM desc) loop
 			DBMS_OUTPUT.PUT_LINE(R.Name||'		'||R.best_figure||'				'||R.fiveWM);
 		end loop;
 	end fifers;
