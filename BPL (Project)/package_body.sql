@@ -151,7 +151,10 @@ create or replace package body bpl as
 	
 	procedure countryPlayer(country_name country.cname@site_link %type)
 		IS
+	totalPlayer integer;
 	begin
+		select count(nationality) into totalPlayer from playerTeamCountry where cname=country_name;
+		DBMS_OUTPUT.PUT_LINE('Total Players: '||totalPlayer);
 		DBMS_OUTPUT.PUT_LINE('Name			Team			Role');
 		DBMS_OUTPUT.PUT_LINE('_____________________________________________________________________');
 		for R in (select * from playerTeamCountry where cname=country_name) loop
